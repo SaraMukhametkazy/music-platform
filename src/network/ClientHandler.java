@@ -1,5 +1,6 @@
 package network;
 
+import model.Message;
 import service.ChatService;
 
 import java.io.*;
@@ -37,6 +38,8 @@ public class ClientHandler extends Thread {
                 username = "Anonymous";
             }
 
+            sendChatHistory();
+
             broadcast("System: " + username + " joined the chat.");
 
             String message;
@@ -66,6 +69,16 @@ public class ClientHandler extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void sendChatHistory() {
+        List<Message> history = chatService.getAllMessages();
+
+        writer.println("----- Chat History -----");
+        for (Message msg : history) {
+            writer.println(msg.toString());
+        }
+        writer.println("------------------------");
     }
 
     private void broadcast(String message) {

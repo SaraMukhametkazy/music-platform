@@ -64,6 +64,6 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "[" + timestamp + "] " + senderName + ": " + content;
+        return "[" + timestamp.toLocalTime().withNano(0) + "] " + senderName + ": " + content;
     }
 }
