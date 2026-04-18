@@ -1,8 +1,9 @@
 package model;
 
 import interfaces.Playable;
+import interfaces.Searchable;
 
-public class Song extends MediaItem implements Playable {
+public class Song extends MediaItem implements Playable, Searchable {
     private String artistName;
     private String genre;
     private int playCount;
@@ -21,6 +22,19 @@ public class Song extends MediaItem implements Playable {
     public void play() {
         System.out.println("Now playing: " + getTitle() + " by " + artistName);
         playCount++;
+    }
+
+    @Override
+    public boolean matches(String keyword) {
+        if (keyword == null) {
+            return false;
+        }
+
+        String lowerKeyword = keyword.toLowerCase();
+
+        return getTitle().toLowerCase().contains(lowerKeyword)
+                || artistName.toLowerCase().contains(lowerKeyword)
+                || genre.toLowerCase().contains(lowerKeyword);
     }
 
     @Override
