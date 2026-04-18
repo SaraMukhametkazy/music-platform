@@ -1,36 +1,56 @@
-import database.PlaylistDAO;
+import model.Listener;
 import model.Playlist;
 import model.Song;
+import model.User;
+import service.AuthService;
+import service.MusicService;
+import service.PlaylistService;
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        PlaylistDAO playlistDAO = new PlaylistDAO();
 
-        Playlist playlist = new Playlist(0, "My Favorites", 1);
-        boolean created = playlistDAO.createPlaylist(playlist);
-        System.out.println("Playlist created: " + created);
+        AuthService authService = new AuthService();
+        MusicService musicService = new MusicService();
+        PlaylistService playlistService = new PlaylistService();
 
-        boolean added1 = playlistDAO.addSongToPlaylist(1, 1);
-        boolean added2 = playlistDAO.addSongToPlaylist(1, 2);
+        // 🔐 Регистрация
+        User user = new Listener(0, "testuser", "123", "test@mail.com", "Pop");
+        authService.register(user);
 
-        System.out.println("Song 1 added: " + added1);
-        System.out.println("Song 2 added: " + added2);
+        // 🔑 Логин
+        User loggedUser = authService.login("testuser", "123");
+        System.out.println("Logged in: " + loggedUser);
 
-        Playlist foundPlaylist = playlistDAO.getPlaylistById(1);
+        // 🎵 Добавление песни
+        Song song = new Song(0, "Test Song", 180, "Test Artist", "Pop", 0);
+        musicService.addSong(song);
 
-        if (foundPlaylist != null) {
-            System.out.println("\nPlaylist info:");
-            System.out.println(foundPlaylist);
+        // 📃 Получение всех песен
+        List<Song> songs = musicService.getAllSongs();
+        for (Song s : songs) {
+            System.out.println(s);
+        }
 
-            System.out.println("\nSongs in playlist:");
-            List<Song> songs = foundPlaylist.getSongs();
-            for (Song song : songs) {
-                System.out.println(song);
-            }
-        } else {
-            System.out.println("Playlist not found.");
+        // ▶️ Проигрывание
+        if (!songs.isEmpty()) {
+            musicService.playSong(songs.get(0));
+        }
+
+        // 📂 Создание плейлиста
+        Playlist playlist = new Playlist(0, "My Playlist", 1);
+        playlistService.createPlaylist(playlist);
+
+        // ➕ Добавление песни в плейлист
+        playlistService.addSongToPlaylist(1, 1);
+
+        // 📜 Получение плейлиста
+        Playlist p = playlistService.getPlaylistById(1);
+        System.out.println("Playlist: " + p);
+
+        for (Song s : p.getSongs()) {
+            System.out.println(" - " + s);
         }
     }
 }
